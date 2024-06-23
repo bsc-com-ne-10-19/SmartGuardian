@@ -14,8 +14,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+# allowed_from_env = os.environ.get("ALLOWED_HOSTS").split(",")
 
+# ngrok_url = 'eb5f-105-234-164-2.ngrok-free.app'
+# render_url = 'smart-guardian-2.onrender.com'
+
+# ALLOWED_HOSTS = allowed_from_env + [ngrok_url, render_url]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -28,12 +33,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'newapp',
+    'rest_framework_simplejwt',
     'DeviceApp',
     'AlertManagerApp',
     'StudentManagerApp',
     'APIGateway',
     'corsheaders',
+    # 'userAccounts',
 ]
 
 MIDDLEWARE = [
@@ -47,14 +53,23 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
         # Other permission classes if needed
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     # Other settings...
 }
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.AllowAny',
+#         # Other permission classes if needed
+#     ],
+#     # Other settings...
+# }
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -92,6 +107,9 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('redis_channels', 6380)],
         },
+        # 'MIDDLEWARE': [
+        #     'your_project.middleware.TokenAuthMiddlewareStack',
+        # ],
     },
 }
 
@@ -108,6 +126,18 @@ DATABASES = {
         'PORT': '5432',          
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': '1234',
+#         'HOST': 'postgres',   # Or your database host
+#         'PORT': '5432',          
+#     }
+# }
 
 
 # Password validation
@@ -135,7 +165,9 @@ MAPBOX_API_KEY = os.environ.get("MAPBOX_API_KEY")
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lusaka'
+
 
 USE_I18N = True
 
@@ -211,3 +243,34 @@ LOGGING = {
         },
     },
 }
+
+# from celery.schedules import crontab
+
+# CELERY_BEAT_SCHEDULE = {
+#     'aggregate-alert-data-every-hour': {
+#         'task': 'AlertManagerApp.tasks.aggregate_alert_data',
+#         'schedule': crontab(minute=0, hour='*/1'),  # Every hour
+#     },
+# }
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379",
+#     }
+# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+# AUTH_USER_MODEL = 'userAccounts.CustomUser'
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#     }
+# }
+# CORS_ALLOWED_ORIGINS = [
+#     'https://6674f756b8e00c1a9198641c--rad-marigold-883e04.netlify.app/',  # Replace with your Netlify frontend URL
+# ]
